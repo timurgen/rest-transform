@@ -9,7 +9,7 @@ app = Flask(__name__)
 prop = os.environ.get("PROPERTY", "response")
 method = os.environ.get("METHOD", "get")
 url_template = Template(os.environ["URL"])
-headers = os.environ.get("HEADERS", {})
+headers = json.loads(os.environ.get("HEADERS", "{}"))
 
 
 @app.route('/transform', methods=['POST'])
