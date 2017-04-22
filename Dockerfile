@@ -1,5 +1,9 @@
 FROM python:3-alpine
 MAINTAINER Baard H. Rehn Johansen "baard@rehn.no"
+ARG BuildNumber=unknown
+LABEL BuildNumber $BuildNumber
+ARG Commit=unknown
+LABEL Commit $Commit
 COPY ./service /service
 WORKDIR /service
 RUN pip install -r requirements.txt
