@@ -9,6 +9,7 @@ app = Flask(__name__)
 prop = os.environ.get("PROPERTY", "response")
 method = os.environ.get("METHOD", "get")
 url_template = Template(os.environ["URL"])
+headers = os.environ.get("HEADERS", {})
 
 
 @app.route('/transform', methods=['POST'])
@@ -20,10 +21,11 @@ def receiver():
             if index > 0:
                 yield ","
             url = url_template.render(entity)
-            if method is "get":
-                entity[prop] = requests.get(url).json()
+            if method == "get":
+                entity[prop] = requests.get(url, headers=headers).json()
             else:
-                entity[prop] = requests.request(method, url, entity.get("payload"))
+                entity[prop] = requests.request(method, url, data=entity.get("payload"),
+                                                headers=headers).json()
             yield json.dumps(entity)
         yield "]"
 
