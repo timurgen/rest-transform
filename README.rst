@@ -19,6 +19,58 @@ The service listens on port 5001.
 
 JSON entities can be posted to 'http://localhost:5001/transform'. The result is streamed back to the client.
 
+Example config:
+
+::
+
+    [{
+      "_id": "my-rest-transform-system",
+      "type": "system:microservice",
+      "docker": {
+        "environment": {
+          "HEADERS": {
+            "Accept": "application/json; version=2",
+            "Authorization": "token my-travis-token"
+          },
+          "URL": "https://api.travis-ci.org/settings/env_vars?repository_id={{ repo_id }}"
+        },
+        "image": "sesamcommunity/sesam-rest-transform",
+        "port": 5001
+      }
+    },
+    {
+      "_id": "my-transform-pipe",
+      "type": "pipe",
+      "source": {
+        "type": "dataset",
+        "dataset": "my-source"
+      },
+      "transform": [{
+        "type": "dtl",
+        "rules": {
+          "default": [
+            ["copy", "*"],
+            ["add", "::repo_id", "_S.id"]
+          ]
+        }
+      }, {
+        "type": "http",
+        "system": "my-rest-transform-system",
+        "url": "/transform"
+      }, {
+        "type": "dtl",
+        "rules": {
+          "default": [
+            ["add", "details", "_S.response"],
+            ["add", "_id", "_S.name"],
+            ["add", "name", "_S.name"]
+          ]
+        }
+      }]
+    }]
+    
+In this case the entities passed to the transform require a p
+
 
 Examples:
 
