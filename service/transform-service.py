@@ -47,7 +47,7 @@ def receiver():
         logger.info("Filter flag is set - filtering out entities")
         filtered = []
         for entity in entities:
-            if not entity['_filtered']:
+            if not entity['filtered']:
                 filtered.append(entity)
         # create the response
         logger.info("Amount of entities after filter %s", len(filtered))
