@@ -42,7 +42,9 @@ def receiver():
 
     # get entities from request
     entities = request.get_json()
+
     logger.info("Received %s entities from Sesam", len(entities))
+    logger.info(json.dumps(entities))
     if skip_filtered == "true":
         logger.info("Filter flag is set - filtering out entities")
         filtered = []
