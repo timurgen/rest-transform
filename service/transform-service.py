@@ -20,7 +20,8 @@ prop = os.environ.get("PROPERTY", "response")
 method = os.environ.get("METHOD", "get")
 url_template = Template(os.environ["URL"])
 headers = json.loads(os.environ.get("HEADERS", "{}"))
-skip_filtered = os.environ.get("SKIP_FILTERED", "false")
+error_prop = os.environ.get("ERROR_PROPERTY", "error")
+filter_prop = os.environ.get("FILTER_PROPERTY")
 
 
 @app.route('/transform', methods=['POST'])
@@ -33,10 +34,16 @@ def receiver():
                 yield ","
             url = url_template.render(entity)
             if method == "get":
-                entity[prop] = requests.get(url, headers=headers).json()
+                response = requests.get(url, headers=headers)
             else:
-                entity[prop] = requests.request(method, url, data=entity.get("payload"),
-                                                headers=headers).json()
+                response = requests.request(method, url, data=entity.get("payload"), headers=headers)
+            if response.status_code >= 200 and response.status_code < 300:
+                entity[prop] = response.json()
+            else:
+                entity[error_prop] = {'status_code': response.status_code, 'reason': response.reason,
+                                      'text': response.text}
+
+
             yield json.dumps(entity)
         yield "]"
 
@@ -44,12 +51,11 @@ def receiver():
     entities = request.get_json()
 
     logger.info("Received %s entities from Sesam", len(entities))
-    logger.info(json.dumps(entities))
-    if skip_filtered == "true":
+    if filter_prop:
         logger.info("Filter flag is set - filtering out entities")
         filtered = []
         for entity in entities:
-            if not entity['filtered']:
+            if not entity[filter_prop]:
                 filtered.append(entity)
         # create the response
         logger.info("Amount of entities after filter %s", len(filtered))
