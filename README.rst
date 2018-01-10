@@ -20,7 +20,7 @@ The service listens on port 5001.
 JSON entities can be posted to 'http://localhost:5001/transform'. The result is streamed back to the client.
 
 Example config:
-
+Last example contains the filter flag.
 ::
 
     [{
@@ -33,6 +33,7 @@ Example config:
             "Authorization": "token my-travis-token"
           },
           "URL": "https://api.travis-ci.org/settings/env_vars?repository_id={{ repo_id }}"
+          "SKIP_FILTERED": "true"
         },
         "image": "sesamcommunity/sesam-rest-transform",
         "port": 5001
@@ -98,6 +99,17 @@ Examples:
        "_id": "john",
        "response": "foo-response",
        "name": "John Smith"
+     }
+   ]
+
+::
+
+   $ curl -s -XPOST 'http://localhost:5001/transform' -H "Content-type: application/json" -d '[{ "_id":  "jane", "_filtered": false, "name": "Jane Doe" },{ "_id": "john", "_filtered": true, "name": "John Smith" }]' | jq -S .
+   [
+     {
+       "_id": "jane",
+       "response": "foo-response",
+       "name": "Jane Doe"
      }
    ]
 
