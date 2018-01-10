@@ -104,7 +104,7 @@ Examples:
 
 ::
 
-   $ curl -s -XPOST 'http://localhost:5001/transform' -H "Content-type: application/json" -d '[{ "_id":  "jane", "_filtered": false, "name": "Jane Doe" },{ "_id": "john", "_filtered": true, "name": "John Smith" }]' | jq -S .
+   $ curl -s -XPOST 'http://localhost:5001/transform' -H "Content-type: application/json" -d '[{ "_id":  "jane", "filtered": false, "name": "Jane Doe" },{ "_id": "john", "filtered": true, "name": "John Smith" }]' | jq -S .
    [
      {
        "_id": "jane",
