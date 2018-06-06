@@ -10,17 +10,27 @@ prop = os.environ.get("PROPERTY", "response")
 method = os.environ.get("METHOD", "get")
 url_template = Template(os.environ["URL"])
 headers = json.loads(os.environ.get("HEADERS", "{}"))
+guid_str = os.environ.get("BOOKING_GUID_KEY", "creditcard-booking:guid")
+iata_str = os.environ.get("IATA_KEY", "creditcard-booking:iata")
+api_keys = json.loads(os.environ.get("API_KEYS", '[]'))
 
 
 @app.route('/transform', methods=['POST'])
 def receiver():
-
     def generate(entities):
         yield "["
         for index, entity in enumerate(entities):
             if index > 0:
                 yield ","
-            url = url_template.render(entity)
+            booking_guid = entity.get(guid_str)
+            iata = entity.get(iata_str)
+            api_key = resolve_api_key(api_keys, iata)
+
+            if type(api_key) != "str":
+                entity[prop] = "API key for " + iata + " not found"
+                yield json.dumps(entity)
+                continue
+            url = url_template.render(entity) + booking_guid + "?api_key=" + api_key
             if method == "get":
                 entity[prop] = requests.get(url, headers=headers).json()
             else:
@@ -36,6 +46,11 @@ def receiver():
     return Response(generate(entities), mimetype='application/json')
 
 
+def resolve_api_key(keys, iata_code):
+    for key in enumerate(keys):
+        if list(key[1].keys())[0] == iata_code:
+            return list(key[1].values())[0]
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
-
