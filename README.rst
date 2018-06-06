@@ -4,8 +4,8 @@ sesam-rest-transform
 
 Microservice that calls a REST service (with optional payload) and stores the result in a configurable property.
 
-.. image:: https://travis-ci.org/sesam-community/rest-transform.svg?branch=master
-    :target: https://travis-ci.org/sesam-community/rest-transform
+.. image:: https://travis-ci.org/timurgen/rest-transform.svg?branch=master
+    :target: https://travis-ci.org/timurgen/rest-transform
 
 ::
 
