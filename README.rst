@@ -1,5 +1,5 @@
 ====================
-sesam-rest-transform
+sesam-altitude-rest-transform
 ====================
 
 Microservice that calls a altitude reservation booking service finds parking data for given guuid's and stores the result in a configurable property.
