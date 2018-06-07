@@ -37,8 +37,7 @@ Example config:
         "image": "ohuenno/altitude-rest-transform",
         "port": 5001
       }
-    }
-,
+    },
     {
       "_id": "my-transform-pipe",
       "type": "pipe",
