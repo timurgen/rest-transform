@@ -48,7 +48,7 @@ def receiver():
 
 
 def resolve_api_key(keys, iata_code):
-    api_key_arr = keys.get(iata_code)
+    api_key_arr = keys.get(iata_code.upper())
     return api_key_arr[0]
 
 

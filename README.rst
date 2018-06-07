@@ -2,14 +2,14 @@
 sesam-rest-transform
 ====================
 
-Microservice that calls a REST service (with optional payload) and stores the result in a configurable property.
+Microservice that calls a altitude booking service finds parking data for given guuid's and stores the result in a configurable property.
 
 .. image:: https://travis-ci.org/timurgen/rest-transform.svg?branch=master
     :target: https://travis-ci.org/timurgen/rest-transform
 
 ::
 
-  $ URL="https://foo.bar/api/{{ _id }}" python3 service/transform-service.py
+  $ URL="https://foo.bar/api/" python3 service/transform-service.py
    * Running on http://0.0.0.0:5001/ (Press CTRL+C to quit)
    * Restarting with stat
    * Debugger is active!
