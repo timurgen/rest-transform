@@ -2,42 +2,43 @@
 sesam-rest-transform
 ====================
 
-Microservice that calls a altitude booking service finds parking data for given guuid's and stores the result in a configurable property.
+Microservice that calls a altitude reservation booking service finds parking data for given guuid's and stores the result in a configurable property.
 
 .. image:: https://travis-ci.org/timurgen/rest-transform.svg?branch=master
     :target: https://travis-ci.org/timurgen/rest-transform
 
 ::
 
-  $ URL="https://foo.bar/api/" python3 service/transform-service.py
-   * Running on http://0.0.0.0:5001/ (Press CTRL+C to quit)
-   * Restarting with stat
-   * Debugger is active!
-   * Debugger pin code: 260-787-156
+  $ URL="https://foo.bar/api/" python service/transform-service.py
 
 The service listens on port 5001.
 
 JSON entities can be posted to 'http://localhost:5001/transform'. The result is streamed back to the client.
+Attribute API_KEYS must be encoded as HTTP query string.
 
 Example config:
 
 ::
 
     [{
-      "_id": "my-rest-transform-system",
+      "_id": "altitude-rest-transform-system",
       "type": "system:microservice",
       "docker": {
         "environment": {
+          "API_KEYS": "$SECRET(altitude_api_keys_arr)",
+          "BOOKING_GUID_KEY": "creditcard-booking:guid",
           "HEADERS": {
-            "Accept": "application/json; version=2",
-            "Authorization": "token my-travis-token"
+            "Accept": "application/json; version=2"
           },
-          "URL": "https://api.travis-ci.org/settings/env_vars?repository_id={{ repo_id }}"
+          "IATA_KEY": "creditcard-booking:iata",
+          "PROPERTY": "altitude",
+          "URL": "$ENV(altitude-api-url)"
         },
-        "image": "sesamcommunity/sesam-rest-transform",
+        "image": "ohuenno/altitude-rest-transform",
         "port": 5001
       }
-    },
+    }
+,
     {
       "_id": "my-transform-pipe",
       "type": "pipe",
@@ -55,7 +56,7 @@ Example config:
         }
       }, {
         "type": "http",
-        "system": "my-rest-transform-system",
+        "system": "altitude-rest-transform-system",
         "url": "/transform"
       }, {
         "type": "dtl",
@@ -69,36 +70,3 @@ Example config:
       }]
     }]
     
-In this case the entities passed to the transform require a p
-
-
-Examples:
-
-::
-
-   $ curl -s -XPOST 'http://localhost:5001/transform' -H "Content-type: application/json" -d '[{ "_id": "jane", "name": "Jane Doe" }]' | jq -S .
-   [
-     {
-       "_id": "jane",
-       "response": "foo-response",
-       "name": "Jane Doe"
-     }
-   ]
-
-::
-
-   $ curl -s -XPOST 'http://localhost:5001/transform' -H "Content-type: application/json" -d @sample.json |jq -S .
-   [
-     {
-       "_id": "jane",
-       "response": "foo-response",
-       "name": "Jane Doe"
-     },
-     {
-       "_id": "john",
-       "response": "foo-response",
-       "name": "John Smith"
-     }
-   ]
-
-Note the example uses `curl <https://curl.haxx.se/>`_ to send the request and `jq <https://stedolan.github.io/jq/>`_ prettify the response.
