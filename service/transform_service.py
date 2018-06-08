@@ -73,7 +73,7 @@ def resolve_api_key(keys, iata_code):
         logging.debug("Found %i API key(s)", len(api_key_arr))
     else:
         logging.warning("Didn't found API key for %s, entity will not be processed", iata_code)
-        return api_key_arr
+        return None
     return api_key_arr[0]
 
 
