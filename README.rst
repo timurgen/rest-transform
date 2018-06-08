@@ -9,7 +9,7 @@ Microservice that calls a altitude reservation booking service finds parking dat
 
 ::
 
-  $ URL="https://foo.bar/api/" python service/transform_service.py
+  $ URL="https://foo.bar/api/" API_KEYS="OSL=xxxx&TOS=yyyy&MOL=zzzzz" python service/transform_service.py
 
 The service listens on port 5001.
 
